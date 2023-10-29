@@ -1,0 +1,23 @@
+{
+  "name": "whatsapp-clone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "vivekiyer114",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "bcrypt": "5.1.1",
+    "body-parser": "1.20.2",
+    "express": "4.18.2",
+    "http": "^0.0.1-security",
+    "iocat": "^0.4.1",
+    "jsonwebtoken": "9.0.2",
+    "mongodb": "6.2.0",
+    "socket.io": "^4.7.2"
+  }
+}
