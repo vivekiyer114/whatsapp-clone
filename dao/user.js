@@ -52,7 +52,7 @@ class UserDao {
         try {
             await this.dbInstance.connect();
             const pipeline = [
-                { $match: { username: 'vivekiyer114' } }, { $unwind: "$groups" }, 
+                { $match: { username } }, { $unwind: "$groups" }, 
                 { $lookup: { from: 'groups', as: 'groups', localField: 'groups', foreignField: "_id" } }, 
                 { $unwind: "$groups" }, 
                 { $unwind: { path: "$groups.messages", preserveNullAndEmptyArrays: true } }, 
