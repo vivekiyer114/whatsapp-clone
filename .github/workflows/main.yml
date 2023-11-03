@@ -1,0 +1,32 @@
+name: Deploy to Remote Server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t your-registry/your-app-image .
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push your-registry/your-app-image
+
+      - name: SSH into remote server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_SERVER_HOST }}
+          username: ${{ secrets.REMOTE_SERVER_USERNAME }}
+          password: ${{ secrets.REMOTE_SERVER_PASSWORD }}
+          script: |
+            docker pull your-registry/your-app-image
+            docker stop your-app-container || true
+            docker rm your-app-container || true
+            docker run -d -p 3000:3000 --name your-app-container your-registry/your-app-image
