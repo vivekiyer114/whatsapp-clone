@@ -10,7 +10,6 @@ import { addMemberToGroup, createGroup, createMessage, getGroupData } from './co
 import { ADMIN_RESTRICTED_PATHS, JWT_SECRET_KEY } from './constants.js';
 
 import http from 'http';
-import {Server as SocketServer} from 'socket.io';
 
 import { WebSocketServer } from 'ws';
 const app = express();
