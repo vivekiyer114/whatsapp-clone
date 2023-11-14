@@ -14,7 +14,7 @@ class UserDao {
             await this.dbInstance.connect();
             const user = await this.dbInstance.getCollection('users').findOne({ username });
             if (!user) {
-                throw new Error({ status: 401, message: "Invalid username or password" });
+                throw new Error("Invalid username or password");
             }
             return user;
         } catch (err) {
@@ -52,12 +52,27 @@ class UserDao {
         try {
             await this.dbInstance.connect();
             const pipeline = [
-                { $match: { username } }, { $unwind: "$groups" }, 
+                { $match: { username:'vivek' } }, { $unwind: "$groups" }, 
                 { $lookup: { from: 'groups', as: 'groups', localField: 'groups', foreignField: "_id" } }, 
                 { $unwind: "$groups" }, 
                 { $unwind: { path: "$groups.messages", preserveNullAndEmptyArrays: true } }, 
-                { $lookup: { from: "messages", localField: "groups.messages.message_id", as: "messages", foreignField: "_id" } }
+                { $lookup: { from: "messages", localField: "groups.messages.message_id", as: "messages", foreignField: "_id" } },
+                { $unwind: "$messages" },
+                { $lookup: { from: "users", localField: "groups.messages.user_id", foreignField: "_id", as: "messageUser" } },
+                {
+                    $group: {
+                        _id: "$groups._id",
+                        name: { $first: "$groups.name" },
+                        messages: {
+                            $push: {
+                                content: "$messages.content",
+                                user_name: "$messageUser.name"
+                            }
+                        }
+                    }
+                }
             ];
+            
 
             return (await this.dbInstance.getCollection('users').aggregate(pipeline).toArray());
         } catch (err) {

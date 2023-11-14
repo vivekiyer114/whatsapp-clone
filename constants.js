@@ -1,5 +1,5 @@
 export const DATABASE_URL = {
-    development:"mongodb://localhost:27017",
+    development:"mongodb://91.92.136.212:27017",
     production:""
 }
 

@@ -59,6 +59,7 @@ async function authenticateUserMiddleware(req, res, next) {
 
     if (isAdminPath && !user.is_admin){
       res.status(401).json("Access Denied!")
+      return;
     }
 
     req.user = user;
@@ -80,5 +81,5 @@ app.get('/ping', (req, res) => res.send("pong"))
 
 // io.listen(3000);
 server.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}, pid - ${process.pid}`);
 });

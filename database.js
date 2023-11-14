@@ -4,7 +4,7 @@ class Database {
   constructor(url, dbName) {
     this.url = url;
     this.dbName = dbName;
-    this.client = new MongoClient(this.url);
+    this.client = new MongoClient(this.url, {monitorCommands: true});
   }
 
   async connect() {
