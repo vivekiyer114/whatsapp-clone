@@ -52,21 +52,40 @@ class UserDao {
         try {
             await this.dbInstance.connect();
             const pipeline = [
-                { $match: { username:'vivek' } }, { $unwind: "$groups" }, 
-                { $lookup: { from: 'groups', as: 'groups', localField: 'groups', foreignField: "_id" } }, 
-                { $unwind: "$groups" }, 
-                { $unwind: { path: "$groups.messages", preserveNullAndEmptyArrays: true } }, 
-                { $lookup: { from: "messages", localField: "groups.messages.message_id", as: "messages", foreignField: "_id" } },
-                { $unwind: "$messages" },
-                { $lookup: { from: "users", localField: "groups.messages.user_id", foreignField: "_id", as: "messageUser" } },
+                { $match: { username } },
+                { $unwind: "$groups" },
+                { $lookup: { from: 'groups', as: 'groups', localField: 'groups', foreignField: "_id" } },
+                { $unwind: "$groups" },
+                {
+                    $lookup: {
+                        from: "messages",
+                        localField: "groups.messages.message_id",
+                        foreignField: "_id",
+                        as: "messages"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "groups.messages.user_id",
+                        foreignField: "_id",
+                        as: "messageUser"
+                    }
+                },
                 {
                     $group: {
                         _id: "$groups._id",
                         name: { $first: "$groups.name" },
                         messages: {
                             $push: {
-                                content: "$messages.content",
-                                user_name: "$messageUser.name"
+                                $cond: {
+                                    if: { $eq: ["$messages", []] },
+                                    then: null,
+                                    else: {
+                                        content: { $ifNull: ["$messages.content", null] },
+                                        user_name: { $ifNull: ["$messageUser.name", null] }
+                                    }
+                                }
                             }
                         }
                     }
