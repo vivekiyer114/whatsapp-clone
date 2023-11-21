@@ -82,8 +82,8 @@ class UserDao {
                                     if: { $eq: ["$messages", []] },
                                     then: null,
                                     else: {
-                                        content: { $ifNull: ["$messages.content", null] },
-                                        user_name: { $ifNull: ["$messageUser.name", null] }
+                                        content: "$messages.content", // { $ifNull: [, null] },
+                                        user_name: "$messageUser.name" // { $ifNull: ["$messageUser.name", null] }
                                     }
                                 }
                             }
